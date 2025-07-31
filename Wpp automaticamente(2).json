@@ -1,0 +1,448 @@
+{
+  "name": "Wpp automaticamente",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "688f95d9-c6a1-46a7-83de-70e23ee74d85",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -32,
+        -96
+      ],
+      "id": "aed7f917-96bb-40c8-883d-5a4985a816f1",
+      "name": "Webhook",
+      "webhookId": "688f95d9-c6a1-46a7-83de-70e23ee74d85"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "1b92f3e1-561c-494d-8dc6-1bdf94eb9dca",
+              "leftValue": "={{ $json.body.data.messageType }}",
+              "rightValue": "conversation",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        192,
+        -96
+      ],
+      "id": "1926457b-1d54-4511-89bd-a293a868413d",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.body.data.message.conversation }}",
+        "options": {
+          "systemMessage": "Papel e Identidade:\nVocê é Traly 🤖, meu assistente pessoal de TI e guardião digital, operando diretamente no meu número pessoal. Sua missão é ser meu ponto de contato inteligente para tudo relacionado à tecnologia, combinando expertise técnica com um toque de bom humor. Você é eficiente, preciso e um pouco nerd.\n\nContexto:\nVocê vive no meu WhatsApp e me ajuda a gerenciar e registrar interações sobre TI. Além de mim, pessoas próximas (como minha família) podem interagir com você. É crucial que você seja sempre prestativo e amigável com elas, mas saiba que a autoridade final sou eu, Talys.\n\nTarefas Específicas:\n\nInformar Situações de TI:\n\nQuando eu te fornecer uma atualização (ex: \"Traly, o sistema de e-mails está em manutenção até as 15h\"), sua função é armazenar essa informação.\n\nSe alguém perguntar sobre o status desse sistema, você deve relatar a situação de forma clara e objetiva.\n\nTirar Dúvidas:\n\nUse sua vasta base de conhecimento para responder a perguntas sobre tecnologia, software, hardware, redes ou problemas de TI que eu ou outros te apresentem.\n\nSe não souber a resposta, seja honesto e diga: \"Essa é uma ótima pergunta! Não tenho essa informação no momento, mas já registrei para que o Talys possa verificar.\"\n\nRegistrar Dúvidas (Ação Interna):\n\nApós cada interação de dúvida, você deve registrar a pergunta internamente para meu controle. Esta ação não deve ser visível na sua resposta ao usuário.\n\nProcessamento Interno (Não visível ao usuário):\n\nAo final de uma interação de ajuda, você deve gerar e armazenar um registro no seguinte formato exato:\n[LOG] - Data/Hora: [DD/MM/AAAA HH:MM] | Solicitante: [Nome da Pessoa, se souber, ou 'Desconhecido'] | Dúvida: '[A pergunta feita]'\n\nTom e Formato das Respostas:\n\nTom Profissional-Brincalhão: Seja amigável, acessível e use um tom levemente brincalhão. Use emojis com moderação (🤖, 💡, ✅, ⚙️). Uma piada nerd sutil ou um trocadilho tecnológico de vez em quando é bem-vindo, mas apenas se não comprometer a clareza.\n\nClareza e Precisão: Apesar do tom descontraído, a informação técnica deve ser impecável. Suas respostas precisam ser precisas, fáceis de entender e diretas.\n\nFormato: Use listas (bullet points) para explicar passos ou dividir informações complexas.\n\nInstruções Especiais: Como Interagir com Familiares\n\nQuando alguém que não sou eu iniciar uma conversa, identifique-se de forma calorosa e útil. Exemplo: \"Olá! Eu sou o Traly 🤖, o assistente de TI do Talys. Em que posso ajudar hoje?\"\n\nSeja extra paciente com eles. Evite jargões técnicos e explique as coisas da forma mais simples possível.\n\nLembre-se de registrar a dúvida deles no seu log interno.\n\nJamais compartilhe informações pessoais minhas, de conversas anteriores ou de outros familiares. Sua discrição é total."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.1,
+      "position": [
+        448,
+        -96
+      ],
+      "id": "1aa701a1-3950-45c7-8fc7-2622e30d38c5",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        272,
+        160
+      ],
+      "id": "96034582-5d77-4841-bfce-72af0b50d441",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "sVwgHzMeqB15S2iL",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.body.data.key.remoteJid }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        432,
+        176
+      ],
+      "id": "5ad9a76f-ada1-43bb-9d1c-da31fbcbb964",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1tRX5z3yPY3tlfzaasoUZqaST0CKw7VgV_Idl4yna7Mg",
+          "mode": "list",
+          "cachedResultName": "Meu TT",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1tRX5z3yPY3tlfzaasoUZqaST0CKw7VgV_Idl4yna7Mg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Página1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1tRX5z3yPY3tlfzaasoUZqaST0CKw7VgV_Idl4yna7Mg/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.6,
+      "position": [
+        576,
+        128
+      ],
+      "id": "05099765-1ad7-4f8a-b21f-341303cef895",
+      "name": "Buscar dados na planilha",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "uQyA71qcwpPw676W",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1tRX5z3yPY3tlfzaasoUZqaST0CKw7VgV_Idl4yna7Mg",
+          "mode": "list",
+          "cachedResultName": "Meu TT",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1tRX5z3yPY3tlfzaasoUZqaST0CKw7VgV_Idl4yna7Mg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1694590841,
+          "mode": "list",
+          "cachedResultName": "Página2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1tRX5z3yPY3tlfzaasoUZqaST0CKw7VgV_Idl4yna7Mg/edit#gid=1694590841"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "ID do Projeto": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('ID_do_Projeto', ``, 'string') }}",
+            "Nome do Projeto": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Nome_do_Projeto', ``, 'string') }}",
+            "Gerente de Projeto": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Gerente_de_Projeto', ``, 'string') }}",
+            "Status": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Status', ``, 'string') }}",
+            "Data de Início": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Data_de_In_cio', ``, 'string') }}",
+            "Data de Término Estimada": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Data_de_T_rmino_Estimada', ``, 'string') }}",
+            "Orçamento (R$)": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Or_amento__R__', ``, 'string') }}",
+            "Progresso (%)": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Progresso____', ``, 'string') }}",
+            "Riscos": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Riscos', ``, 'string') }}",
+            "Comentários Adicionais": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Coment_rios_Adicionais', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "ID do Projeto",
+              "displayName": "ID do Projeto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nome do Projeto",
+              "displayName": "Nome do Projeto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Gerente de Projeto",
+              "displayName": "Gerente de Projeto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Data de Início",
+              "displayName": "Data de Início",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Data de Término Estimada",
+              "displayName": "Data de Término Estimada",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Orçamento (R$)",
+              "displayName": "Orçamento (R$)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Progresso (%)",
+              "displayName": "Progresso (%)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Riscos",
+              "displayName": "Riscos",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Comentários Adicionais",
+              "displayName": "Comentários Adicionais",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.6,
+      "position": [
+        736,
+        128
+      ],
+      "id": "10818702-ae60-4d7b-b9f3-088ba0584f1a",
+      "name": "Setar os dados da mensagem",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "uQyA71qcwpPw676W",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "={{ $('Webhook').item.json.body.instance }}",
+        "remoteJid": "={{ $('Webhook').item.json.body.data.key.remoteJid.replace(\"@s.whatsapp.net\",\"\") }}",
+        "messageText": "={{ $('AI Agent').item.json.output }}",
+        "options_message": {
+          "delay": 1200
+        }
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        1184,
+        -176
+      ],
+      "id": "88c4431e-cd8c-4180-8117-5b5e64dcf2ba",
+      "name": "Enviar texto",
+      "credentials": {
+        "evolutionApi": {
+          "id": "GU3PqyNKItimbWwy",
+          "name": "Evolution account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "chat-api",
+        "operation": "read-messages",
+        "instanceName": "={{ $('Webhook').item.json.body.instance }}",
+        "remoteJid": "={{ $('Webhook').item.json.body.data.key.remoteJid.replace(\"@s.whatsapp.net\",\"\") }}",
+        "messageId": "={{ $('Webhook').item.json.body.data.key.id }}"
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        880,
+        -96
+      ],
+      "id": "0db0781d-2f2c-4af7-b1a9-be0a3ac4b40c",
+      "name": "Marcar mensagens como lidas",
+      "credentials": {
+        "evolutionApi": {
+          "id": "GU3PqyNKItimbWwy",
+          "name": "Evolution account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "Ia Pessoal que conecta no Wpp\n\n",
+        "height": 640,
+        "width": 1440,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -80,
+        -320
+      ],
+      "typeVersion": 1,
+      "id": "a7391e30-6475-4876-8dbd-9c361d2e4b69",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar dados na planilha": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Setar os dados da mensagem": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Marcar mensagens como lidas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Marcar mensagens como lidas": {
+      "main": [
+        [
+          {
+            "node": "Enviar texto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "16160cab-8f35-4360-a1c3-e310043d55ea",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "32bcaa26beadafec762f602f1deb9d7d34aa4491b6b8723b8a11373d82a99b4a"
+  },
+  "id": "JiqVvIjlfr4Tv0Fq",
+  "tags": []
+}
